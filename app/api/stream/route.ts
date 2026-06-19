@@ -1,6 +1,6 @@
 import { getSession } from "@/lib/session";
 import { buildSnapshot } from "@/lib/snapshot";
-import { ping } from "@/lib/store";
+import { addConnection, heartbeatConnection, removeConnection } from "@/lib/store";
 import type { Snapshot } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -18,6 +18,10 @@ function fingerprint(s: Snapshot): string {
 
 export async function GET() {
   const session = getSession();
+  const connId = crypto.randomUUID();
+  // Presence is keyed by user; anonymous viewers (shouldn't reach here, /event
+  // requires a session) fall back to a per-connection identity.
+  const presenceUser = session?.userId ?? `guest:${connId}`;
   const encoder = new TextEncoder();
 
   let closed = false;
@@ -56,7 +60,6 @@ export async function GET() {
 
       const emitSnapshot = async (force = false) => {
         if (closed) return;
-        if (session) await ping(session.userId);
         const snap = await buildSnapshot();
         const fp = fingerprint(snap);
         if (force || fp !== lastFingerprint) {
@@ -65,11 +68,17 @@ export async function GET() {
         }
       };
 
+      // Register this live connection before the first snapshot so the count
+      // already reflects it.
+      await addConnection(connId, presenceUser);
+
       // Snapshot-on-connect: late joiners compute correct remaining time, and
       // reconnects self-heal to the authoritative server state.
       await emitSnapshot(true);
 
       pollTimer = setInterval(() => {
+        // Heartbeat keeps this connection "live" inside the presence TTL window.
+        void heartbeatConnection(connId, presenceUser);
         void emitSnapshot(false);
       }, POLL_MS);
 
@@ -78,7 +87,10 @@ export async function GET() {
       }, HEARTBEAT_MS);
     },
     cancel() {
+      // Fires the instant the client disconnects (tab close / navigate away):
+      // drop this connection so the online count decreases immediately.
       cleanup();
+      void removeConnection(connId);
     },
   });
 

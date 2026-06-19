@@ -37,3 +37,5 @@ yarn-error.log*
 
 # Local harness backup (not source)
 .harness-backup/
+
+.vercel

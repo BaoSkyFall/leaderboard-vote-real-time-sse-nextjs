@@ -35,6 +35,7 @@ export const ROSTER: ReadonlyArray<RosterUser> = [
   { id: "baoppq", role: "btc" },
   { id: "ulbertvo", role: "voter" },
   { id: "hanhptn", role: "voter" },
+  { id: "huybna", role: "voter" },
   { id: "anhdm", role: "btc" },
   { id: "phucptn", role: "btc" },
 ];

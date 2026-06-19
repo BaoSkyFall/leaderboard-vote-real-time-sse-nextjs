@@ -69,7 +69,7 @@ export default function LoginForm() {
           <h1 className="font-display-lg text-display-lg-mobile uppercase tracking-tight text-on-surface">
             RAP BATTLE
             <br />
-            <span className="text-primary-container">LIVE</span>
+            <span className="text-primary-container">LIVE VOTE</span>
           </h1>
           <p className="font-body-base text-body-base text-on-surface-variant">
             Nhập ID nhân viên để vào

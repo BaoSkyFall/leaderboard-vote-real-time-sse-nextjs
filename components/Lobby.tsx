@@ -61,7 +61,7 @@ export default function Lobby({ snapshot, role }: LobbyProps) {
           Sắp bắt đầu
         </h2>
         <p className="mx-auto max-w-[280px] text-body-base leading-tight text-on-surface-variant">
-          Ban tổ chức sẽ bắt đầu vote trong ít phút
+          Ban tổ chức sẽ bắt đầu vote  <br></br>trong ít phút nữa ...
         </p>
       </div>
 
@@ -95,9 +95,9 @@ export default function Lobby({ snapshot, role }: LobbyProps) {
                 </div>
                 <span
                   className={`font-label-caps tracking-wider ${
-                    central
-                      ? "text-xs font-bold text-on-surface"
-                      : "text-[10px] text-on-surface-variant"
+
+                      "text-xs font-bold text-on-surface"
+
                   }`}
                 >
                   {c.rapName.toUpperCase()}

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GEM RAP BATTLE - Lobby</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .animate-ripple {
+            animation: ripple 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+        }
+        .glass-card {
+            backdrop-filter: blur(12px);
+            background: rgba(19, 30, 60, 0.7);
+        }
+        .gradient-ring {
+            background: conic-gradient(from 0deg, #1452f5, #ffb68a, #1452f5);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#ffb68a",
+                        "error": "#ffb4ab",
+                        "on-secondary-fixed": "#321300",
+                        "outline": "#8d90a2",
+                        "primary-container": "#1452f5",
+                        "on-surface-variant": "#A8B4D0",
+                        "surface-tint": "#b7c4ff",
+                        "on-tertiary-container": "#ffdacf",
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#0f1a37",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed-variant": "#743500",
+                        "surface-container-highest": "#293452",
+                        "primary-fixed": "#dde1ff",
+                        "error-red": "#FF4D4D",
+                        "secondary-fixed-dim": "#ffb68a",
+                        "tertiary-fixed": "#ffdbd1",
+                        "surface-bright": "#1A2540",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "on-primary-container": "#dce0ff",
+                        "on-secondary": "#522300",
+                        "on-primary-fixed-variant": "#0038b7",
+                        "tertiary": "#ffb59f",
+                        "primary": "#b7c4ff",
+                        "on-secondary-container": "#471e00",
+                        "surface-variant": "#293452",
+                        "surface-container-high": "#1e2947",
+                        "surface-container-lowest": "#020c29",
+                        "surface-container": "#131e3c",
+                        "secondary-container": "#e0731d",
+                        "inverse-surface": "#dae2ff",
+                        "on-surface": "#dae2ff",
+                        "on-tertiary-fixed-variant": "#862300",
+                        "on-tertiary-fixed": "#3a0a00",
+                        "on-primary": "#002583",
+                        "on-error": "#690005",
+                        "inverse-primary": "#004bef",
+                        "on-tertiary": "#5f1600",
+                        "background": "#06122f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "margin-mobile": "20px",
+                        "xs": "4px",
+                        "lg": "24px",
+                        "margin-desktop": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Hanken Grotesk"],
+                        "body-base": ["Hanken Grotesk"],
+                        "title-md": ["Hanken Grotesk"],
+                        "stat-lg": ["Hanken Grotesk"],
+                        "label-caps": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "stat-lg-mobile": ["Hanken Grotesk"],
+                        "body-bold": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["32px", {"lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "body-base": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "400"}],
+                        "title-md": ["24px", {"lineHeight": "31px", "letterSpacing": "0", "fontWeight": "600"}],
+                        "stat-lg": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "58px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "stat-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-bold": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-[#0A1633] text-on-surface font-body-base min-h-screen flex flex-col overflow-x-hidden">
+<!-- Top App Bar (Shared Component Strategy) -->
+<header class="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-outline-variant/30 bg-surface/80">
+<div class="flex items-center justify-between px-margin-mobile h-16 w-full">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+<h1 class="font-headline-md text-headline-md-mobile tracking-tighter text-on-surface uppercase opacity-60 text-sm">GEM RAP BATTLE</h1>
+<span class="material-symbols-outlined text-primary" data-icon="sensors">sensors</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-32 px-margin-mobile flex flex-col items-center justify-center space-y-xl max-w-md mx-auto w-full">
+<!-- Live Status Pill -->
+<div class="bg-surface-container-high/80 rounded-full px-4 py-1.5 flex items-center gap-2 border border-outline-variant/20 shadow-sm">
+<span class="relative flex h-2 w-2">
+<span class="animate-ripple absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="font-label-caps text-label-caps text-on-surface">42 ĐANG ONLINE</span>
+</div>
+<!-- Pulse Hero Area -->
+<div class="relative flex items-center justify-center py-8">
+<!-- Pulsing Rings -->
+<div class="absolute w-64 h-64 rounded-full gradient-ring opacity-20 blur-2xl animate-pulse"></div>
+<div class="relative w-48 h-48 rounded-full border-4 border-primary-container flex items-center justify-center shadow-[0_0_40px_rgba(20,82,245,0.3)]">
+<div class="w-40 h-40 rounded-full border-2 border-secondary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-primary" data-icon="stadium" style="font-variation-settings: 'FILL' 1;">stadium</span>
+</div>
+</div>
+</div>
+<!-- Headline -->
+<div class="text-center space-y-sm">
+<h2 class="font-headline-md text-headline-md-mobile text-primary tracking-tight">Sắp bắt đầu</h2>
+<p class="text-on-surface-variant text-body-base max-w-[280px] mx-auto leading-tight">
+                Ban tổ chức sẽ bắt đầu vote trong ít phút
+            </p>
+</div>
+<!-- Candidate Preview -->
+<div class="w-full pt-4">
+<div class="flex justify-around items-end gap-2">
+<!-- Candidate 1 -->
+<div class="flex flex-col items-center opacity-40 grayscale transition-all hover:grayscale-0 hover:opacity-100">
+<div class="w-16 h-16 rounded-full border-2 border-outline-variant p-1 mb-2">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Close-up portrait of a charismatic rapper named MC Blaze with street-wear fashion, dramatic stage lighting in blue and orange tones, cinematic photography style, high contrast, professional rap artist headshot." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD4GeuqvVXtZOzgWOI-gf3_0oSZ5aYWIKBKENEN-wuvxqXC7SE5vgHh9zrWI4Sg1uWIEwsKK-yy-vrOwLhdtQHgtYi87g9v6CW42syq2GorMbHQw3xrgV546c7vVRNaGTvY6bAEqjImPssXAd4UCcIHmECtxpL0_EEB85eRYBUKGbWua9UE3el-0w-jLIR_fkTXJDQ4ftk0ZapO0dR1jrr8N_IwwlimrEd9shCmBBnpX1Sc2J8sQFnoQsqmyBl0OKSN9Y96qKhom3w')"></div>
+</div>
+<span class="font-label-caps text-[10px] tracking-wider text-on-surface-variant">MC BLAZE</span>
+</div>
+<!-- Candidate 2 (Central) -->
+<div class="flex flex-col items-center opacity-60">
+<div class="w-20 h-20 rounded-full border-2 border-primary-container p-1 mb-2 relative">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Cinematic studio portrait of Lil Song, a trendy hip-hop artist with neon accents, wearing a stylish beanie and oversized jacket. The lighting is moody with deep navy and vibrant orange highlights, capturing a professional musician persona." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCgNzVn8D8xC8rPU0XO-yxCUg5-dtmAnQEC9mCXNzQcgX6nvEaAYInsTzwyKqOqvU9_mOshAW7GcIDCn_71gy3nKmzmMon3f1Cr477n7KVh2G7P7ygF-e8Ryq9a6ylUZEO8Pu5wUI_N7WzpIkvGKbEqyxkAZz3YidP-rxCbHWSYewhZVI1fosIApgz2xaJt1oLiGl_kIieLmmtBPhbLKkC2t98eNzu9TeFiYkNewfFs9Vko4g24vW9nLqIeM5yvdwjB7L02MIpJgZ0')"></div>
+<div class="absolute -top-1 -right-1 bg-surface-container-highest rounded-full p-1 border border-outline-variant">
+<span class="material-symbols-outlined text-xs text-on-surface" data-icon="lock">lock</span>
+</div>
+</div>
+<span class="font-label-caps text-xs tracking-wider text-on-surface font-bold">LIL SÓNG</span>
+</div>
+<!-- Candidate 3 -->
+<div class="flex flex-col items-center opacity-40 grayscale">
+<div class="w-16 h-16 rounded-full border-2 border-outline-variant p-1 mb-2">
+<div class="w-full h-full rounded-full bg-cover bg-center" data-alt="Portrait of a rapper known as Dai Cathay with a serious expression, wearing urban streetwear, set against a dark architectural background with subtle blue rim lighting, sharp focus, professional artist profile picture." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3nH8kKb73KzZlrODYzrSBHEp8YNPnwRDxxCmlQC1_rz3P8yqbnKuY2zcR2Jx5oWG1evcdLPvKDQNJeS_ii4-Bfxxe33_y6aVjhs1j7RFrgxyB9tD7mYZgMuKIFvNxRCLDXpyOx7NrIdlEm8LU9ZXqMRNGZ8yPLex9Div5Nr288BfFavbBV1_7JP6VeOjmVrKy8t-gFixNfgQ1yqCWNQ8005Wduy76jc0JO2wYYLU_n93Wae8Fg4RdQD8C1p69SOebi2vxUfjYEn4')"></div>
+</div>
+<span class="font-label-caps text-[10px] tracking-wider text-on-surface-variant">ĐẠI CATHAY</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Organizer Control Panel (Elevated Card) -->
+<section class="fixed bottom-0 w-full glass-card border-t border-outline-variant/30 rounded-t-3xl p-6 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-40">
+<div class="max-w-md mx-auto space-y-md">
+<div class="flex items-center justify-between">
+<span class="font-label-caps text-[10px] tracking-[0.2em] text-on-surface-variant font-bold">ĐIỀU KHIỂN BTC (ORGANIZER)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-sm" data-icon="settings">settings</span>
+</div>
+<div class="flex items-center gap-gutter bg-surface-container-lowest/50 rounded-xl p-3 border border-outline-variant/10">
+<div class="flex-grow">
+<label class="block font-label-caps text-[10px] text-on-surface-variant mb-1">THỜI LƯỢNG (PHÚT)</label>
+<input class="bg-transparent border-none text-headline-md font-headline-md p-0 focus:ring-0 w-full text-primary" type="number" value="4"/>
+</div>
+<div class="h-10 w-[1px] bg-outline-variant/20"></div>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface" data-icon="remove">remove</span>
+</button>
+<button class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-on-surface" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<button class="col-span-1 bg-surface-container-highest border border-outline-variant text-on-surface font-body-bold py-3.5 rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="stop">stop</span>
+                    DỪNG
+                </button>
+<button class="col-span-2 bg-primary-container text-on-primary-container font-body-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary-container/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    BẮT ĐẦU
+                </button>
+</div>
+<button class="w-full text-on-surface-variant font-label-caps text-[10px] py-1 opacity-60 hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="refresh">refresh</span>
+                RESET TRẬN ĐẤU
+            </button>
+</div>
+</section>
+<!-- Bottom Navigation (Hidden for Lobby/BTC but structural inclusion) -->
+<nav class="hidden md:flex fixed bottom-0 w-full z-50 bg-surface-container-high/90 backdrop-blur-lg border-t border-outline-variant/20">
+<div class="flex justify-around items-center w-full px-2 py-3 max-w-screen-md mx-auto">
+<div class="flex flex-col items-center justify-center text-on-surface-variant/70">
+<span class="material-symbols-outlined" data-icon="how_to_vote">how_to_vote</span>
+<span class="font-label-caps text-[10px]">VOTE</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant/70">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+<span class="font-label-caps text-[10px]">RANKING</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary-fixed bg-primary-container/20 rounded-xl px-4 py-1">
+<span class="material-symbols-outlined" data-icon="live_tv" style="font-variation-settings: 'FILL' 1;">live_tv</span>
+<span class="font-label-caps text-[10px]">STREAM</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant/70">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-[10px]">PROFILE</span>
+</div>
+</div>
+</nav>
+<script>
+        // Micro-interaction for the START button
+        const startBtn = document.querySelector('.bg-primary-container');
+        startBtn.addEventListener('click', () => {
+            startBtn.innerHTML = `
+                <span class="animate-spin material-symbols-outlined" data-icon="sync">sync</span>
+                ĐANG KÍCH HOẠT...
+            `;
+            setTimeout(() => {
+                startBtn.innerHTML = `
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;" data-icon="play_arrow">play_arrow</span>
+                    BẮT ĐẦU
+                `;
+            }, 2000);
+        });
+
+        // Subtle parallax effect on hero ring
+        document.addEventListener('mousemove', (e) => {
+            const rings = document.querySelectorAll('.gradient-ring, .w-48');
+            const x = (window.innerWidth / 2 - e.pageX) / 50;
+            const y = (window.innerHeight / 2 - e.pageY) / 50;
+            rings.forEach(ring => {
+                ring.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>GEM Rap Battle - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb59f",
+                    "secondary-container": "#e0731d",
+                    "on-surface": "#dae2ff",
+                    "secondary": "#ffb68a",
+                    "on-secondary-fixed": "#321300",
+                    "on-primary-container": "#dce0ff",
+                    "on-primary": "#002583",
+                    "surface-tint": "#b7c4ff",
+                    "surface-dim": "#070F24",
+                    "inverse-primary": "#004bef",
+                    "error-container": "#93000a",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed": "#001452",
+                    "surface-bright": "#1A2540",
+                    "primary": "#b7c4ff",
+                    "inverse-on-surface": "#252f4d",
+                    "outline-variant": "#434656",
+                    "surface": "#06122f",
+                    "secondary-fixed": "#ffdbc8",
+                    "surface-container-highest": "#293452",
+                    "on-tertiary-fixed": "#3a0a00",
+                    "error-red": "#FF4D4D",
+                    "surface-variant": "#293452",
+                    "tertiary-container": "#b93400",
+                    "primary-container": "#1452f5",
+                    "on-tertiary-container": "#ffdacf",
+                    "surface-container-high": "#1e2947",
+                    "tertiary": "#ffb59f",
+                    "on-surface-variant": "#c3c5d9",
+                    "on-error-container": "#ffdad6",
+                    "on-background": "#dae2ff",
+                    "outline": "#8d90a2",
+                    "primary-fixed-dim": "#b7c4ff",
+                    "on-secondary": "#522300",
+                    "surface-container": "#131e3c",
+                    "primary-fixed": "#dde1ff",
+                    "tertiary-fixed": "#ffdbd1",
+                    "on-tertiary": "#5f1600",
+                    "inverse-surface": "#dae2ff",
+                    "secondary-fixed-dim": "#ffb68a",
+                    "background": "#06122f",
+                    "on-secondary-container": "#471e00",
+                    "on-secondary-fixed-variant": "#743500",
+                    "on-error": "#690005",
+                    "on-primary-fixed-variant": "#0038b7",
+                    "surface-container-low": "#0f1a37",
+                    "surface-container-lowest": "#020c29",
+                    "on-tertiary-fixed-variant": "#862300"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "20px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "margin-desktop": "40px",
+                    "lg": "24px",
+                    "unit": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "title-md": ["Hanken Grotesk"],
+                    "body-bold": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "label-caps": ["Hanken Grotesk"],
+                    "stat-lg-mobile": ["Hanken Grotesk"],
+                    "body-base": ["Hanken Grotesk"],
+                    "stat-lg": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "title-md": ["24px", {"lineHeight": "31px", "letterSpacing": "0", "fontWeight": "600"}],
+                    "body-bold": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "stat-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-base": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "stat-lg": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "58px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0A1633;
+            overflow: hidden;
+            font-family: 'Hanken Grotesk', sans-serif;
+        }
+
+        .slash-pattern {
+            background-image: repeating-linear-gradient(
+                -45deg,
+                rgba(20, 82, 245, 0.05) 0px,
+                rgba(20, 82, 245, 0.05) 1px,
+                transparent 1px,
+                transparent 20px
+            );
+        }
+
+        .glow-overlay {
+            background: radial-gradient(circle at 50% 50%, rgba(20, 82, 245, 0.15) 0%, transparent 70%);
+        }
+
+        .input-underline {
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0px rgba(20, 82, 245, 0);
+        }
+
+        .input-field:focus + .input-underline {
+            width: 100%;
+            box-shadow: 0 0 12px rgba(20, 82, 245, 0.8);
+        }
+
+        .btn-primary-glow {
+            box-shadow: 0 4px 20px rgba(20, 82, 245, 0.4);
+            transition: transform 0.1s active, box-shadow 0.2s ease;
+        }
+
+        .btn-primary-glow:active {
+            transform: scale(0.98);
+        }
+
+        .electric-pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.4; }
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-on-surface">
+<!-- Background Decor -->
+<div class="fixed inset-0 slash-pattern z-0"></div>
+<div class="fixed inset-0 glow-overlay z-0"></div>
+<div class="fixed top-[-10%] right-[-10%] w-64 h-64 bg-primary-container/10 blur-[100px] rounded-full electric-pulse"></div>
+<!-- Main Container -->
+<main class="relative z-10 flex flex-col items-center justify-between min-h-screen w-full max-w-[800px] mx-auto px-margin-mobile py-xl overflow-y-auto">
+<!-- Header -->
+<header class="w-full flex justify-center pt-md">
+<img alt="GEM Wordmark" class="h-10 object-contain" src="data:image/png;base64,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"/>
+</header>
+<!-- Content Area -->
+<div class="w-full flex-1 flex flex-col justify-center items-center gap-xl py-xl">
+<div class="text-center space-y-sm">
+<h1 class="font-display-lg text-display-lg-mobile text-on-surface tracking-tight uppercase">
+                    RAP BATTLE<br/>
+<span class="text-primary-container">LIVE Voting</span>
+</h1>
+<p class="font-body-base text-body-base text-on-surface-variant">
+                    Nhập ID nhân viên để vào
+                </p>
+</div>
+<!-- Login Form -->
+<div class="w-full space-y-lg">
+<div class="relative group w-full">
+<label class="font-label-caps text-label-caps text-on-surface-variant block mb-xs uppercase tracking-widest" for="employee-id">
+                        Employee ID
+                    </label>
+<div class="relative bg-surface-container-lowest/50 rounded-t-lg">
+<input class="input-field w-full bg-transparent border-none py-md px-md font-title-md text-title-md-mobile text-on-surface placeholder:text-on-surface-variant/30 focus:ring-0" id="employee-id" placeholder="vd: baoppq" type="text"/>
+<div class="input-underline absolute bottom-0 left-0 h-[2px] w-0 bg-primary-container"></div>
+<div class="absolute bottom-0 left-0 h-[1px] w-full bg-outline-variant/30"></div>
+</div>
+<!-- Error State (Hidden by default) -->
+<div class="hidden mt-sm flex items-center gap-xs" id="error-message">
+<span class="material-symbols-outlined text-error-red text-[16px]">error</span>
+<span class="font-label-caps text-label-caps text-error-red">ID không hợp lệ</span>
+</div>
+</div>
+<button class="btn-primary-glow w-full h-[56px] bg-primary-container text-on-primary font-body-bold text-body-bold rounded-lg flex items-center justify-center gap-sm uppercase tracking-widest" onclick="handleLogin()">
+                    VÀO
+                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full text-center pb-md">
+<p class="font-label-caps text-label-caps text-on-surface-variant/60 uppercase">
+                Chỉ dành cho nhân viên nội bộ GEM
+            </p>
+</footer>
+</main>
+<script>
+        // Micro-interaction: Error state simulation
+        function handleLogin() {
+            const input = document.getElementById('employee-id');
+            const error = document.getElementById('error-message');
+            const btn = document.querySelector('.btn-primary-glow');
+
+            if (!input.value.trim()) {
+                error.classList.remove('hidden');
+                input.parentElement.classList.add('bg-error-container/10');
+
+                // Shake animation
+                btn.classList.add('animate-shake');
+                setTimeout(() => btn.classList.remove('animate-shake'), 400);
+            } else {
+                error.classList.add('hidden');
+                input.parentElement.classList.remove('bg-error-container/10');
+
+                // Success feedback
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span>';
+                setTimeout(() => {
+                    btn.innerHTML = 'ĐANG VÀO...';
+                }, 800);
+            }
+        }
+
+        // Handle focus visualization
+        const inputEl = document.getElementById('employee-id');
+        inputEl.addEventListener('focus', () => {
+            document.getElementById('error-message').classList.add('hidden');
+        });
+    </script>
+<style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+            animation: shake 0.2s ease-in-out 0s 2;
+        }
+    </style>
+</body></html>

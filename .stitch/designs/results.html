@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<title>Kết Quả Chung Cuộc - Live Battle</title>
+<!-- Tailwind Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#293452",
+                    "surface": "#06122f",
+                    "on-secondary-fixed-variant": "#743500",
+                    "tertiary": "#ffb59f",
+                    "inverse-primary": "#004bef",
+                    "tertiary-fixed": "#ffdbd1",
+                    "on-surface-variant": "#A8B4D0",
+                    "error": "#ffb4ab",
+                    "surface-dim": "#06122f",
+                    "surface-bright": "#2d3857",
+                    "on-primary": "#002583",
+                    "inverse-surface": "#dae2ff",
+                    "on-tertiary-fixed-variant": "#862300",
+                    "on-error": "#690005",
+                    "primary-fixed-dim": "#b7c4ff",
+                    "error-red": "#FF4D4D",
+                    "on-primary-fixed-variant": "#0038b7",
+                    "on-secondary-container": "#471e00",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#1452f5",
+                    "surface-container-highest": "#293452",
+                    "surface-container-low": "#0f1a37",
+                    "inverse-on-surface": "#252f4d",
+                    "secondary-fixed": "#ffdbc8",
+                    "error-container": "#93000a",
+                    "primary-fixed": "#dde1ff",
+                    "on-background": "#dae2ff",
+                    "outline-variant": "#434656",
+                    "secondary-fixed-dim": "#ffb68a",
+                    "on-secondary": "#522300",
+                    "surface-tint": "#b7c4ff",
+                    "on-primary-fixed": "#001452",
+                    "on-tertiary-container": "#ffdacf",
+                    "outline": "#8d90a2",
+                    "tertiary-fixed-dim": "#ffb59f",
+                    "primary": "#b7c4ff",
+                    "on-tertiary": "#5f1600",
+                    "on-secondary-fixed": "#321300",
+                    "surface-container": "#131e3c",
+                    "secondary": "#ffb68a",
+                    "on-primary-container": "#dce0ff",
+                    "background": "#06122f",
+                    "surface-container-high": "#1e2947",
+                    "secondary-container": "#e0731d",
+                    "tertiary-container": "#b93400",
+                    "on-tertiary-fixed": "#3a0a00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xl": "32px",
+                    "sm": "8px",
+                    "gutter": "16px",
+                    "margin-mobile": "20px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "unit": "4px",
+                    "margin-desktop": "40px"
+            },
+            "fontFamily": {
+                    "title-md": ["Hanken Grotesk"],
+                    "body-base": ["Hanken Grotesk"],
+                    "stat-lg": ["Hanken Grotesk"],
+                    "stat-lg-mobile": ["Hanken Grotesk"],
+                    "label-caps": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "body-bold": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "title-md": ["24px", {"lineHeight": "31px", "letterSpacing": "0", "fontWeight": "600"}],
+                    "body-base": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "stat-lg": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "stat-lg-mobile": ["32px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.08em", "fontWeight": "600"}],
+                    "headline-md": ["32px", {"lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "58px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-bold": ["16px", {"lineHeight": "26px", "letterSpacing": "0", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #06122f; /* Deep Navy stage */
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .podium-container {
+            perspective: 1000px;
+        }
+
+        .glow-orange {
+            box-shadow: 0 0 40px 5px rgba(224, 115, 29, 0.4);
+        }
+
+        .glow-blue {
+            box-shadow: 0 0 30px 2px rgba(20, 82, 245, 0.3);
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .podium-rank-1 {
+            background: linear-gradient(180deg, #1e2947 0%, #131e3c 100%);
+            border: 2px solid #e0731d;
+        }
+
+        .podium-rank-2, .podium-rank-3 {
+            background: linear-gradient(180deg, #131e3c 0%, #0f1a37 100%);
+            border: 1px solid #434656;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-base text-on-surface">
+<!-- Confetti Layer -->
+<canvas class="confetti-canvas" id="confetti"></canvas>
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 flex justify-between items-center px-margin-mobile h-16">
+<div class="flex items-center">
+<span class="material-symbols-outlined text-primary" data-icon="sensors">sensors</span>
+</div>
+<h1 class="font-title-md text-title-md-mobile text-primary tracking-tighter uppercase">KẾT QUẢ CHUNG CUỘC</h1>
+<div class="flex items-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</span>
+</div>
+</header>
+<!-- Main Content Stage -->
+<main class="relative pt-24 pb-32 min-h-screen flex flex-col items-center px-margin-mobile overflow-hidden">
+<!-- Atmospheric Background Element -->
+<div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[150%] h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+<!-- The Winners Podium -->
+<div class="podium-container w-full max-w-[400px] flex flex-col items-center mt-8">
+<div class="flex items-end justify-center w-full gap-2 mb-12">
+<!-- Rank #2 (Left) -->
+<div class="flex flex-col items-center flex-1 transition-all duration-700 delay-300 opacity-0 translate-y-10" id="rank-2">
+<div class="relative mb-3">
+<div class="w-16 h-16 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A close-up portrait of a cool rap artist with silver hair and streetwear, dark urban lighting, high contrast blue neon accents, cinematic photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaDRs4iuzk_sB0ATTnyLPe98jeb--1Hlt4RW5eYzLE04FkaNK_ZLy7jTNgQBg4Hcvz4HmhBVbr0q6arCCx9ketb8cdZnAiuMphBLHXCmP35W_hgmCq_CYE8gc5JvnE2qqUcbVNltckpcoRghrzSubOrcXzKcHcq15dvDxJAw_5NBJlfXlFjXzXiYHo5oSLSm7hgr0L61821VcakwZV5THnO1JcExwG5762AYfwldthzKVHpCWIG0-qJ28Fjz8MHUSfarO3RgbgeCg"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-surface-container-highest px-1.5 rounded-full border border-outline-variant">
+<span class="text-[10px] font-bold text-on-surface-variant">#2</span>
+</div>
+</div>
+<div class="podium-rank-2 w-full h-24 rounded-t-xl flex flex-col items-center justify-center p-2 text-center">
+<span class="font-body-bold text-sm text-on-surface truncate w-full">Lil' Echo</span>
+<span class="font-stat-lg-mobile text-lg text-primary">9,420</span>
+</div>
+</div>
+<!-- Rank #1 (Center) -->
+<div class="flex flex-col items-center flex-[1.3] z-20 transition-all duration-1000 opacity-0 translate-y-10" id="rank-1">
+<div class="relative mb-4 group animate-float">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 text-secondary-container">
+<span class="material-symbols-outlined text-4xl" data-icon="stars" style="font-variation-settings: 'FILL' 1;">stars</span>
+</div>
+<div class="w-28 h-28 rounded-full border-4 border-secondary-container glow-orange overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A charismatic hip-hop winner, MC Blaze, with a fierce expression, wearing a designer gold chain and a baseball cap, set against a dark stage background with explosive orange and blue lighting, high-quality digital illustration." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXTP9l6jFkCoBULaV4fxuD4ZTkLdgWWKR6vJnbNfOoDnndf_IrYbZuiqw3FwZ1QqMIwFzqeqW_C1Szv5VC41PQ4zRlwM9DYexHmthbnxTPG4HwcJ_xJnR8epEDJX9AfsahwKvSg-SS3mPs432Xk0Do9jTqznb6y5ms3aG6VXMPwVbxqEjrhRR89ast97lTIejasu46B1TZ-tBfvLQTrAhmP3OjhboPaynAtkTLBt6sF1mJBWg9rZtu2bMwKEWXNlfY0mEM30elQMI"/>
+</div>
+<div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-secondary-container px-3 py-1 rounded-full shadow-lg">
+<span class="font-label-caps text-[10px] text-on-secondary whitespace-nowrap">CHAMPION</span>
+</div>
+</div>
+<div class="podium-rank-1 w-full h-40 rounded-t-2xl flex flex-col items-center justify-start pt-6 px-2 text-center shadow-2xl relative overflow-hidden">
+<div class="absolute inset-0 bg-secondary-container/5 pointer-events-none"></div>
+<span class="font-headline-md text-xl text-on-surface mb-1">MC Blaze</span>
+<span class="font-stat-lg-mobile text-4xl text-secondary-container tracking-tight">12,840</span>
+<span class="font-label-caps text-[10px] text-on-surface-variant mt-1">VOTES</span>
+</div>
+</div>
+<!-- Rank #3 (Right) -->
+<div class="flex flex-col items-center flex-1 transition-all duration-700 delay-500 opacity-0 translate-y-10" id="rank-3">
+<div class="relative mb-3">
+<div class="w-14 h-14 rounded-full border-2 border-outline overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A focused female rap artist with braids, edgy makeup, wearing a dark hoodie, low-key lighting with subtle bronze highlights, professional portrait in a modern music studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB11OWPFhT6jnJDKoU4H6SEGhKXloqZV4tutER0xNqZL3pZQg6Mnv2wt7D8w6qbXB_rh2LEtX_WPZjKONHw5LwISPTvuX9TyA5T4QnzNKVAQdWGbVjAaZ04GM0q8NXpOVOlkZOwQs88O8nZGuEop3SGCcaCPrPAWNRp-L0TY_NWQZB2ZdKMVksb_qKXli-PsgPl8TNafYxL-GyIz2LyETFHbt1G7aWKXbhAHlK1Ae3o31zJPAJckuooF3wpoi0T6CFbj0yP22uLqg0"/>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-surface-container-highest px-1.5 rounded-full border border-outline-variant">
+<span class="text-[10px] font-bold text-on-surface-variant">#3</span>
+</div>
+</div>
+<div class="podium-rank-3 w-full h-16 rounded-t-xl flex flex-col items-center justify-center p-2 text-center">
+<span class="font-body-bold text-xs text-on-surface truncate w-full">VibeCheck</span>
+<span class="font-stat-lg-mobile text-base text-outline">7,105</span>
+</div>
+</div>
+</div>
+<!-- Celebratory Text -->
+<div class="text-center mt-8 px-4 transition-all duration-1000 delay-700 opacity-0" id="celeb-text">
+<h2 class="font-headline-md-mobile text-headline-md-mobile text-on-surface mb-2">Chúc mừng nhà vô địch!</h2>
+<p class="font-body-base text-on-surface-variant opacity-80">
+                    Chiến thắng thuyết phục với màn trình diễn bùng nổ tại sân khấu đêm nay.
+                </p>
+</div>
+</div>
+</main>
+<!-- Bottom Actions & Navigation -->
+<footer class="fixed bottom-0 w-full z-50">
+<!-- Floating Detail Button -->
+<div class="flex justify-center pb-28 px-margin-mobile">
+<button class="flex items-center gap-2 px-8 py-3 rounded-full border border-outline-variant bg-surface/40 backdrop-blur-md font-body-bold text-primary hover:bg-surface-variant/50 active:scale-95 transition-all duration-200">
+<span>Xem chi tiết</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</div>
+<!-- Predicted BottomNavBar from JSON -->
+<nav class="bg-surface/90 dark:bg-surface/90 backdrop-blur-2xl border-t border-outline-variant/20 shadow-lg flex justify-around items-center h-20 px-4 pb-safe rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined" data-icon="mic_external_on">mic_external_on</span>
+<span class="font-label-caps text-label-caps">Battle</span>
+</a>
+<a class="flex flex-col items-center justify-center text-secondary-container dark:text-secondary-container bg-secondary-container/10 rounded-full px-4 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard" style="font-variation-settings: 'FILL' 1;">leaderboard</span>
+<span class="font-label-caps text-label-caps">Leaderboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant opacity-60 hover:bg-surface-variant/50" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-label-caps text-label-caps">Rules</span>
+</a>
+</nav>
+</footer>
+<script>
+        // Entry Animations
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('rank-1').classList.remove('opacity-0', 'translate-y-10');
+                document.getElementById('rank-2').classList.remove('opacity-0', 'translate-y-10');
+                document.getElementById('rank-3').classList.remove('opacity-0', 'translate-y-10');
+                document.getElementById('celeb-text').classList.remove('opacity-0');
+                initConfetti();
+            }, 300);
+        });
+
+        // Simple Confetti Animation
+        function initConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#1452f5', '#e0731d', '#b7c4ff', '#ffb68a', '#ffffff'];
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height - canvas.height;
+                    this.size = Math.random() * 8 + 4;
+                    this.speedY = Math.random() * 3 + 2;
+                    this.speedX = Math.random() * 2 - 1;
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.rotation = Math.random() * 360;
+                    this.rotationSpeed = Math.random() * 5 - 2.5;
+                }
+
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    this.rotation += this.rotationSpeed;
+                    if (this.y > canvas.height) {
+                        this.y = -20;
+                        this.x = Math.random() * canvas.width;
+                    }
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                    ctx.restore();
+                }
+            }
+
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body></html>

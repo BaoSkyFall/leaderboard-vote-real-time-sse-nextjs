@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #0a1633;
+  color: #ffffff;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-hanken), "Aptos", "Hanken Grotesk", system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Decorative backgrounds (from the Electric Stage reference designs) */
+.slash-pattern {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(20, 82, 245, 0.05) 0px,
+    rgba(20, 82, 245, 0.05) 1px,
+    transparent 1px,
+    transparent 20px
+  );
+}
+
+.glow-overlay {
+  background: radial-gradient(circle at 50% 50%, rgba(20, 82, 245, 0.15) 0%, transparent 70%);
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  background: rgba(19, 30, 60, 0.7);
+}
+
+.gradient-ring {
+  background: conic-gradient(from 0deg, #1452f5, #ffb68a, #1452f5);
+}
+
+.glow-orange {
+  box-shadow: 0 0 25px rgba(255, 138, 53, 0.4);
+}
+
+.glow-orange-strong {
+  box-shadow: 0 0 40px 5px rgba(224, 115, 29, 0.4);
+}
+
+.glow-blue {
+  box-shadow: 0 0 25px rgba(20, 82, 245, 0.6);
+}
+
+.btn-primary-glow {
+  box-shadow: 0 4px 20px rgba(20, 82, 245, 0.4);
+}
+
+.podium-rank-1 {
+  background: linear-gradient(180deg, #1e2947 0%, #131e3c 100%);
+  border: 2px solid #e0731d;
+}
+
+.podium-rank-2,
+.podium-rank-3 {
+  background: linear-gradient(180deg, #131e3c 0%, #0f1a37 100%);
+  border: 1px solid #434656;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import type { Role } from "@/config/roster";
 import type { RankingEntry, Snapshot } from "@/lib/types";
 import Avatar from "./Avatar";
 
 interface ResultsProps {
   readonly snapshot: Snapshot;
+  readonly role: Role;
 }
 
 const CONFETTI_COLORS = ["#1452f5", "#e0731d", "#b7c4ff", "#ffb68a", "#ffffff"];
@@ -139,10 +141,26 @@ function PodiumSide({
   );
 }
 
-export default function Results({ snapshot }: ResultsProps) {
+export default function Results({ snapshot, role }: ResultsProps) {
+  const [confirming, setConfirming] = useState(false);
+  const [busy, setBusy] = useState(false);
+
   useEffect(() => {
     fireConfetti();
   }, []);
+
+  async function doReset() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      // Reuse the existing role-guarded endpoint. On success the SSE snapshot
+      // flips every client back to the idle lobby.
+      await fetch("/api/admin/reset", { method: "POST" });
+      setConfirming(false);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   const byRank = (r: number) => snapshot.ranking.find((e) => e.rank === r);
   const r1 = byRank(1);
@@ -156,13 +174,13 @@ export default function Results({ snapshot }: ResultsProps) {
 
       {/* Header with logo */}
       <div className="mb-2 flex items-center gap-2">
-        <Image
+        {/*<Image
           src="/logo-white.png"
           alt="GEM"
           width={60}
           height={25}
           className="h-[25px] w-auto object-contain opacity-70"
-        />
+        />*/}
         <h1 className="font-title-md text-title-md uppercase tracking-tighter text-primary">
           Kết quả chung cuộc
         </h1>
@@ -194,6 +212,57 @@ export default function Results({ snapshot }: ResultsProps) {
           </p>
         </motion.div>
       </div>
+
+      {/* BTC-only: start a new round by resetting back to the lobby. */}
+      {role === "btc" && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1 }}
+          onClick={() => setConfirming(true)}
+          className="fixed bottom-0 left-1/2 z-40 flex w-full max-w-[480px] -translate-x-1/2 items-center justify-center gap-2 border-t border-outline-variant/30 bg-surface-container/90 py-4 font-body-bold text-on-surface backdrop-blur-md active:scale-[0.98] transition-transform"
+        >
+          ↻ BẮT ĐẦU LẠI
+        </motion.button>
+      )}
+
+      {/* Confirmation dialog — guards against an accidental wipe mid-celebration. */}
+      {confirming && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="glass-card w-full max-w-sm rounded-3xl border border-outline-variant/30 p-6 text-center"
+          >
+            <h3 className="mb-2 font-headline-md text-xl text-on-surface">
+              Reset trận đấu?
+            </h3>
+            <p className="mb-6 font-body-base text-sm text-on-surface-variant">
+              Kết quả hiện tại sẽ bị xóa và mọi người quay về phòng chờ để bắt đầu
+              vòng mới.
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                disabled={busy}
+                className="rounded-xl border border-outline-variant bg-surface-container-highest py-3 font-body-bold text-on-surface active:scale-95 transition-transform disabled:opacity-50"
+              >
+                Hủy
+              </button>
+              <button
+                type="button"
+                onClick={doReset}
+                disabled={busy}
+                className="rounded-xl bg-secondary-container py-3 font-body-bold text-white shadow-lg active:scale-95 transition-transform disabled:opacity-60"
+              >
+                {busy ? "Đang reset..." : "Xác nhận"}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </main>
   );
 }

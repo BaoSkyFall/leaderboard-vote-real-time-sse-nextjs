@@ -108,7 +108,9 @@ export default function EventClient({ userId, role }: EventClientProps) {
         />
       )}
 
-      {snapshot.state === "ended" && <Results snapshot={snapshot} />}
+      {snapshot.state === "ended" && (
+        <Results snapshot={snapshot} role={role} />
+      )}
     </div>
   );
 }

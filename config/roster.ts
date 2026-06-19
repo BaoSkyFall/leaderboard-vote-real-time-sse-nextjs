@@ -19,7 +19,7 @@ export const ROSTER: ReadonlyArray<RosterUser> = [
   { id: "vilnt", role: "voter" },
   { id: "zisse.nguyen", role: "voter" },
   { id: "baonn", role: "voter" },
-  { id: "nghihh", role: "voter" },
+  { id: "nghihh", role: "btc" },
   { id: "hanhbv", role: "voter" },
   { id: "martin.tran", role: "voter" },
   { id: "anlv", role: "voter" },

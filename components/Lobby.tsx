@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { Role } from "@/config/roster";
 import type { Snapshot } from "@/lib/types";
 import { CANDIDATES } from "@/config/candidates";
@@ -40,8 +41,16 @@ export default function Lobby({ snapshot, role }: LobbyProps) {
           style={{ boxShadow: "0 0 40px rgba(20,82,245,0.3)" }}
         >
           <div className="flex h-40 w-40 items-center justify-center rounded-full border-2 border-secondary/40">
-            {/* Stadium icon replacement */}
-            <span className="text-6xl text-primary" aria-hidden>🏟</span>
+            {/* Rap battle icon — black source PNG filtered to white for the dark stage */}
+            <Image
+              src="/rap.png"
+              alt=""
+              width={88}
+              height={88}
+              aria-hidden
+              className="h-20 w-20 object-contain"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
           </div>
         </div>
       </div>
@@ -64,29 +73,25 @@ export default function Lobby({ snapshot, role }: LobbyProps) {
             return (
               <div
                 key={c.id}
-                className={`flex flex-col items-center transition-all ${
-                  central
-                    ? "opacity-60"
-                    : "opacity-40 grayscale hover:grayscale-0 hover:opacity-100"
-                }`}
+                className={`flex flex-col items-center transition-all `}
               >
                 {/* Avatar ring */}
                 <div
                   className={`relative mb-2 rounded-full border-2 p-1 ${
-                    central
-                      ? "h-20 w-20 border-primary-container"
-                      : "h-16 w-16 border-outline-variant"
+
+                       "h-20 w-20 border-primary-container"
+
                   }`}
                 >
                   <div className="h-full w-full rounded-full overflow-hidden">
                     <Avatar src={c.avatar} name={c.rapName} />
                   </div>
                   {/* Lock icon on center candidate */}
-                  {central && (
+                  {/*{central && (
                     <div className="absolute -right-1 -top-1 rounded-full border border-outline-variant bg-surface-container-highest p-1">
                       <span className="text-[10px] text-on-surface">🔒</span>
                     </div>
-                  )}
+                  )}*/}
                 </div>
                 <span
                   className={`font-label-caps tracking-wider ${

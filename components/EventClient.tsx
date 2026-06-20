@@ -56,6 +56,40 @@ export default function EventClient({ userId, role }: EventClientProps) {
     };
   }, []);
 
+  // Client-driven presence: ping while on the page, beacon a clean leave on
+  // exit. This is what actually keeps the online count correct on Vercel — the
+  // server cannot reliably detect SSE disconnects there.
+  useEffect(() => {
+    const ping = () => {
+      fetch("/api/presence", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+        keepalive: true,
+      }).catch(() => {});
+    };
+    const leave = () => {
+      try {
+        const blob = new Blob([JSON.stringify({ leave: true })], {
+          type: "application/json",
+        });
+        navigator.sendBeacon?.("/api/presence", blob);
+      } catch {
+        /* noop */
+      }
+    };
+
+    ping();
+    const id = setInterval(ping, 4000);
+    window.addEventListener("pagehide", leave);
+
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("pagehide", leave);
+      leave();
+    };
+  }, [userId]);
+
   // Persist "I voted" across reconnects/state changes for this tab.
   useEffect(() => {
     const key = `gem_voted_${userId}`;

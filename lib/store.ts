@@ -19,14 +19,15 @@ const K_ENDS_AT = "election:endsAt";
 const K_DURATION = "election:durationSec";
 const K_TALLY = "votes:tally"; // hash candidateId -> count
 const K_VOTERS = "votes:voters"; // set of userId
-const K_CONNS = "presence:conns"; // hash connId -> "userId|lastSeenEpochMs"
+const K_ONLINE = "presence:online"; // sorted set: member=userId, score=last-ping ms
 const kTs = (candidateId: string) => `votes:ts:${candidateId}`; // list of epoch ms
 
-// A live SSE connection heartbeats ~every second; this is only the safety net
-// that prunes connections whose client died without a clean disconnect
-// (network drop, laptop sleep). Clean tab-close removes the connection instantly.
-const ONLINE_TTL_MS = 30_000;
-const CONN_SEP = "|";
+// Presence is CLIENT-DRIVEN: the browser pings ~every 4s while on the page.
+// A user counts as online for this long after their last ping. When they close
+// the tab the pings stop and they fall out of the count within the TTL. This is
+// the only model that works on serverless (Vercel) — the server cannot rely on
+// detecting SSE disconnects, so it must not be the source of truth for presence.
+const ONLINE_TTL_MS = 12_000;
 
 // ---------------------------------------------------------------------------
 // Backend selection
@@ -58,7 +59,7 @@ interface MemoryStore {
   tally: Map<string, number>;
   voters: Set<string>;
   ts: Map<string, number[]>; // candidateId -> sorted epoch ms list
-  conns: Map<string, { userId: string; seen: number }>; // connId -> presence
+  online: Map<string, number>; // userId -> last-ping epoch ms
 }
 
 // Use globalThis so the singleton survives Next.js dev hot-reloads.
@@ -73,7 +74,7 @@ const mem: MemoryStore =
     tally: new Map(),
     voters: new Set(),
     ts: new Map(),
-    conns: new Map(),
+    online: new Map(),
   });
 
 // ---------------------------------------------------------------------------
@@ -299,68 +300,51 @@ export async function getRanking(): Promise<RankingEntry[]> {
 }
 
 // ---------------------------------------------------------------------------
-// Presence — counted by LIVE SSE connections, not by TTL pings.
+// Presence — CLIENT-DRIVEN heartbeat with TTL (serverless-safe).
 //
-// Each SSE connection registers on open and is removed the instant the client
-// disconnects (tab close / navigate away fires the stream's cancel()). The
-// online count is the number of DISTINCT users that currently hold at least one
-// live connection, so it drops immediately when someone leaves. A 30s TTL prunes
-// connections whose client died without a clean disconnect (network drop/sleep);
-// live connections refresh their timestamp on every poll well inside that window.
+// The browser calls markOnline (POST /api/presence) every ~4s while on the
+// page, and removeOnline (sendBeacon on pagehide) for a clean exit. The count
+// is the number of users whose last ping is within ONLINE_TTL_MS. Redis native
+// score pruning means a user who stops pinging (closed tab / crashed / lost
+// network) falls out within the TTL with no server-side disconnect detection.
 // ---------------------------------------------------------------------------
 
-/** Register a live SSE connection for a user. */
-export async function addConnection(connId: string, userId: string): Promise<void> {
-  await heartbeatConnection(connId, userId);
-}
-
-/** Refresh a live connection's last-seen timestamp (called on every poll). */
-export async function heartbeatConnection(
-  connId: string,
-  userId: string,
-): Promise<void> {
+/** Record a heartbeat ping for a user (refreshes their last-seen time). */
+export async function markOnline(userId: string): Promise<void> {
   const uid = userId.trim().toLowerCase();
+  if (!uid) return;
   const now = Date.now();
   if (redis) {
-    await redis.hset(K_CONNS, { [connId]: `${uid}${CONN_SEP}${now}` });
+    await redis.zadd(K_ONLINE, { score: now, member: uid });
   } else {
-    mem.conns.set(connId, { userId: uid, seen: now });
+    mem.online.set(uid, now);
   }
 }
 
-/** Remove a connection when its client disconnects. */
-export async function removeConnection(connId: string): Promise<void> {
+/** Remove a user from presence immediately (clean tab close / logout). */
+export async function removeOnline(userId: string): Promise<void> {
+  const uid = userId.trim().toLowerCase();
+  if (!uid) return;
   if (redis) {
-    await redis.hdel(K_CONNS, connId);
+    await redis.zrem(K_ONLINE, uid);
   } else {
-    mem.conns.delete(connId);
+    mem.online.delete(uid);
   }
 }
 
-/** Distinct users with at least one live (non-stale) connection. */
+/** Number of users whose last ping is within the TTL window. */
 export async function getOnlineCount(): Promise<number> {
   const now = Date.now();
-  const liveUsers = new Set<string>();
-
+  const cutoff = now - ONLINE_TTL_MS;
   if (redis) {
-    const raw = (await redis.hgetall(K_CONNS)) as Record<string, unknown> | null;
-    if (!raw) return 0;
-    const staleConnIds: string[] = [];
-    for (const [connId, val] of Object.entries(raw)) {
-      const str = typeof val === "string" ? val : String(val);
-      const sepIdx = str.lastIndexOf(CONN_SEP);
-      const uid = sepIdx === -1 ? str : str.slice(0, sepIdx);
-      const seen = toNum(sepIdx === -1 ? 0 : str.slice(sepIdx + 1), 0);
-      if (now - seen <= ONLINE_TTL_MS) liveUsers.add(uid);
-      else staleConnIds.push(connId);
-    }
-    if (staleConnIds.length) void redis.hdel(K_CONNS, ...staleConnIds);
-    return liveUsers.size;
+    // Drop everyone who stopped pinging, then count who remains.
+    await redis.zremrangebyscore(K_ONLINE, 0, cutoff);
+    return await redis.zcard(K_ONLINE);
   }
-
-  for (const [connId, { userId, seen }] of mem.conns) {
-    if (now - seen <= ONLINE_TTL_MS) liveUsers.add(userId);
-    else mem.conns.delete(connId);
+  let count = 0;
+  for (const [uid, seen] of mem.online) {
+    if (seen >= cutoff) count++;
+    else mem.online.delete(uid);
   }
-  return liveUsers.size;
+  return count;
 }

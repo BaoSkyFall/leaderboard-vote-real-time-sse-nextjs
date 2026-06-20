@@ -16,7 +16,7 @@ function fingerprint(s: Snapshot): string {
   return `${s.state}|${s.endsAt}|${s.online}|${counts}`;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = getSession();
   const connId = crypto.randomUUID();
   // Presence is keyed by user; anonymous viewers (shouldn't reach here, /event
@@ -28,15 +28,33 @@ export async function GET() {
   let pollTimer: ReturnType<typeof setInterval> | null = null;
   let heartbeatTimer: ReturnType<typeof setInterval> | null = null;
 
-  const cleanup = () => {
+  // Single idempotent teardown. CRITICAL for Vercel serverless: the only
+  // reliable client-disconnect signal there is request.signal "abort" — the
+  // ReadableStream cancel() often does NOT fire, so without this the poll/
+  // heartbeat interval keeps refreshing this connection's timestamp in Redis
+  // forever and the online count never drops when someone leaves.
+  const teardown = () => {
+    if (closed) return;
     closed = true;
     if (pollTimer) clearInterval(pollTimer);
     if (heartbeatTimer) clearInterval(heartbeatTimer);
+    void removeConnection(connId);
   };
 
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
       let lastFingerprint = "";
+
+      // Detect client disconnect ASAP (before any await), then stop everything
+      // and drop the connection so the online count decreases immediately.
+      request.signal.addEventListener("abort", () => {
+        teardown();
+        try {
+          controller.close();
+        } catch {
+          /* already closed */
+        }
+      });
 
       const send = (event: string, data: unknown) => {
         if (closed) return;
@@ -45,7 +63,7 @@ export async function GET() {
             encoder.encode(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`),
           );
         } catch {
-          cleanup();
+          teardown();
         }
       };
 
@@ -54,7 +72,7 @@ export async function GET() {
         try {
           controller.enqueue(encoder.encode(`: ${text}\n\n`));
         } catch {
-          cleanup();
+          teardown();
         }
       };
 
@@ -67,6 +85,17 @@ export async function GET() {
           send("snapshot", snap);
         }
       };
+
+      // If the client already vanished during setup, don't register presence.
+      if (request.signal.aborted) {
+        teardown();
+        try {
+          controller.close();
+        } catch {
+          /* noop */
+        }
+        return;
+      }
 
       // Register this live connection before the first snapshot so the count
       // already reflects it.
@@ -87,10 +116,9 @@ export async function GET() {
       }, HEARTBEAT_MS);
     },
     cancel() {
-      // Fires the instant the client disconnects (tab close / navigate away):
-      // drop this connection so the online count decreases immediately.
-      cleanup();
-      void removeConnection(connId);
+      // Fires on a clean local disconnect; on Vercel the abort listener above
+      // is the dependable path. Both funnel through the same idempotent teardown.
+      teardown();
     },
   });
 

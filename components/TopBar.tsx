@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import type { Role } from "@/config/roster";
 import type { ElectionState } from "@/lib/types";
@@ -13,6 +14,16 @@ interface TopBarProps {
 
 export default function TopBar({ state, connected, role, onLogout }: TopBarProps) {
   const live = state === "running";
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = () => {
+    if (loggingOut) return;
+    // Stays true until the redirect unmounts this component, so the spinner
+    // shows for the whole logout — clear feedback that the tap registered.
+    setLoggingOut(true);
+    onLogout();
+  };
+
   return (
     <header className="fixed left-1/2 top-0 z-50 h-16 w-full max-w-[480px] -translate-x-1/2 border-b border-outline-variant/30 bg-surface/80 backdrop-blur-xl">
       <div className="flex h-full items-center justify-between px-margin-mobile">
@@ -47,10 +58,18 @@ export default function TopBar({ state, connected, role, onLogout }: TopBarProps
           )}
           <button
             type="button"
-            onClick={onLogout}
-            className="font-label-caps text-[10px] uppercase text-on-surface-variant/70 transition-colors hover:text-on-surface"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            aria-busy={loggingOut}
+            className="flex items-center gap-1 font-label-caps text-[10px] uppercase text-on-surface-variant/70 transition-colors hover:text-on-surface disabled:opacity-80"
           >
-            Thoát
+            {loggingOut && (
+              <span
+                className="inline-block h-3 w-3 animate-spin rounded-full border border-on-surface-variant/40 border-t-on-surface"
+                aria-hidden
+              />
+            )}
+            {loggingOut ? "Đang đăng xuất…" : "Đăng xuất"}
           </button>
         </div>
       </div>
